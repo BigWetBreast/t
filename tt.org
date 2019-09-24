@@ -1,0 +1,85 @@
+* 扩展ASM - C表达式中的汇编指令 [fn:1:Gnu Asm Extended]https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
+  使用可扩展的asm你从汇编可以读写c变量和使用c标签进行跳转。
+扩展asm语法使用":"在汇编模板之后定义参数:
+  #+BEGIN_SRC c
+  /** asm 限定符 ( asm模板
+   * : 输出操作符
+   * [: 输入操作符
+   * [: 需恢复操作符(寄存器等) ] ])
+   **/
+  asm asm-qualifiers (AssemblerTemplate
+  : OuputOperands
+  [: InputOperands
+  [: Clobbers ] ])
+  /** asm 限定符 ( asm模板
+   * :
+   * : 输入操作符
+   * : 需恢复操作符(寄存器等)
+   * : 跳转标签 )
+   **/
+  asm asm-qualifiers (AssemblerTemplate
+  :
+  : InputOperands
+  : Clobbers
+  : GotoLabels)
+
+  #+END_SRC
+
+  在第二种形式中，asm限定符包含‘goto’关键字(第一种不包含)
+  
+  'asm'关键字是一个GNU扩展。如果使用‘-ansi’和‘-std’参数编译代码，
+需要使用 ‘__asm__’替换‘asm’(see [[http://gcc.gnu.org/onlinedocs/gcc/Alternate-Keywords.html#Alternate-Keywords][Alternate Keywords]])
+
+** 限定符(Qualifiers)
+
+- valotile (不稳定的，编译器禁用优化)
+  一个典型的用法就是使用输入值生成输出值。然而如果你的asm代码需要产生副作用，
+就需要使用限定词‘volatile’来禁用编译器优化。See [[<<Volatile>>]]
+
+- inline
+  如果使用了限定词‘inline’编译器将会生成最小代码(see [[https://gcc.gnu.org/onlinedocs/gcc/Size-of-an-asm.html#Size-of-an-asm][Size of an asm]] )
+
+- goto
+  本限定词‘goto’通知编译器，asm段可能会跳转到跳转标记列表的某一标记，
+See [[<<GotoLabels>>]]
+
+** 参数(Parameters)
+
+- AssemblerTemplate
+  这是asm代码文本字符串，它是由指定的关联到输入、输出和跳转参数的文本和符号组成。
+See[[<<AssemblerTemplate>>]]。
+
+- OutputOperands
+  一组逗号‘,’分割的需要被asm指令改变的c变量列表。允许空列表 See [[<<OutputOperands>>]]
+
+- InputOperands
+  一组由逗号‘,’分隔的被asm指令读取的c表达式列表。允许空列表 See [[<<InputOperands>>]]
+
+- Clobbers
+  一组由逗号‘,’分隔的被asm指令改变的超出了那些输入列表中的寄存器或者其他变量。
+空列表是被允许的。 See [[<<Clobbers and Scratch Registers>>]]
+
+- GotoLabels
+  当需要你在asm中使用goto时，声明包含需要在asm指令中使用的c Labels。
+See [[<<GotoLabels>>]]
+
+
+** 备注(Remarks)
+   asm 声明允许你在c代码中直接包含汇编指令。这可以帮你最大化的优化时间敏感的程序或者
+调用那些c语言中不容易实现的汇编指令。
+
+   
+   
+** asm模板 <<AssemblerTemplate>>
+   
+
+** <<OutputOperands>>
+
+
+** <<InputOperands>>
+
+
+** <<Clobbers and Scratch Registers>>
+
+
+** <<GotoLabels>>
